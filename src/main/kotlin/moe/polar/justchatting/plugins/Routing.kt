@@ -16,7 +16,12 @@ fun Application.configureRouting() {
     install(AutoHeadResponse)
     install(DoubleReceive)
     install(Resources)
+
     install(StatusPages) {
+        exception<StatusCodeError> { call, cause ->
+            call.respond(cause.code, ErrorResponse(cause.message))
+        }
+
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
             cause.printStackTrace()
