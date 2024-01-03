@@ -1,28 +1,27 @@
-package moe.polar.justchatting.routes
+package moe.polar.justchatting.routes.token
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.AuthenticationStrategy
 import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.principal
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.post
+import io.ktor.server.resources.post
+import io.ktor.server.response.respondText
 import moe.polar.justchatting.entities.dao.Token
 import moe.polar.justchatting.entities.tables.TokensTable
 import moe.polar.justchatting.extensions.query
+import moe.polar.justchatting.extensions.requirePrincipal
 import moe.polar.justchatting.plugins.AuthenticationType
 import moe.polar.justchatting.principals.UserUuidPrincipal
+import moe.polar.justchatting.routes.token.resource.TokenResource
 import moe.polar.justchatting.services.generateToken
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 
 
-fun Route.configureTokenRoute() {
+fun Route.createTokenRoute() {
     authenticate(AuthenticationType.FORM, strategy = AuthenticationStrategy.Required) {
-        post("/token") {
-            val principal = call.principal<UserUuidPrincipal>()
-                ?: return@post call.respondText("Unauthorized", status = HttpStatusCode.Unauthorized)
+        post<TokenResource> {
+            val principal = call.requirePrincipal<UserUuidPrincipal>()
 
             val tokenHolder = principal.toUser()
             val rawToken = generateToken()

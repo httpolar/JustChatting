@@ -1,16 +1,19 @@
 package moe.polar.justchatting.plugins
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.autohead.*
-import io.ktor.server.plugins.doublereceive.*
-import io.ktor.server.plugins.statuspages.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.autohead.AutoHeadResponse
+import io.ktor.server.plugins.doublereceive.DoubleReceive
+import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.resources.Resources
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import moe.polar.justchatting.routes.configureMessagesRoute
-import moe.polar.justchatting.routes.configureTokenRoute
-import moe.polar.justchatting.routes.configureUserRoutes
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import moe.polar.justchatting.errors.responses.StatusCodeError
+import moe.polar.justchatting.routes.installTokenRoutes
+import moe.polar.justchatting.routes.installUsersRoutes
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
@@ -19,7 +22,13 @@ fun Application.configureRouting() {
 
     install(StatusPages) {
         exception<StatusCodeError> { call, cause ->
-            call.respond(cause.code, ErrorResponse(cause.message))
+            val body = buildJsonObject {
+                put("error", true)
+                put("message", cause.message)
+
+            }
+
+            call.respond(cause.code, body)
         }
 
         exception<Throwable> { call, cause ->
@@ -28,15 +37,6 @@ fun Application.configureRouting() {
         }
     }
 
-    routing {
-        get("/") {
-            call.respondText("Hello!")
-        }
-    }
-
-    routing {
-        configureUserRoutes()
-        configureTokenRoute()
-        configureMessagesRoute()
-    }
+    installUsersRoutes()
+    installTokenRoutes()
 }
