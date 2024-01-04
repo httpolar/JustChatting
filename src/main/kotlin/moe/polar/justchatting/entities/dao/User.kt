@@ -42,3 +42,7 @@ fun User.toSerializable() = UserSerializable(
 suspend fun UUID.toUser(): User = query {
     User.find { UsersTable.id eq this@toUser }.single()
 }
+
+suspend fun Iterable<UUID>.toUsers(limit: Int = 500): List<User> = query {
+    User.find { UsersTable.id inList this@toUsers }.limit(limit).toList()
+}
