@@ -11,12 +11,11 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import moe.polar.justchatting.entities.dao.User
 import moe.polar.justchatting.entities.dao.toSerializable
-import moe.polar.justchatting.extensions.requirePrincipal
+import moe.polar.justchatting.entities.dao.getUsers
+import moe.polar.justchatting.extensions.requireUser
 import moe.polar.justchatting.plugins.AuthenticationType
-import moe.polar.justchatting.principals.UserPrincipal
 import moe.polar.justchatting.routes.users.resource.UsersResource
 import moe.polar.justchatting.services.badRequest
-import moe.polar.justchatting.services.getUsersByUUIDs
 import java.util.UUID
 
 
@@ -29,7 +28,7 @@ private data class ReadBody(
 fun Route.readUsersRoute() {
     authenticate(AuthenticationType.BEARER, strategy = AuthenticationStrategy.Required) {
         get<UsersResource> {
-            val principal = call.requirePrincipal<UserPrincipal>()
+            val me = call.requireUser()
             val body = call.receive<ReadBody>()
 
             if (body.ids.isEmpty() && !body.me) {
@@ -37,10 +36,9 @@ fun Route.readUsersRoute() {
             }
 
             if (body.me) {
-                val me = principal.getUser()
                 call.respond(listOf(me.toSerializable()))
             } else {
-                val users = getUsersByUUIDs(body.ids).map(User::toSerializable)
+                val users = body.ids.getUsers().map(User::toSerializable)
                 call.respond(users)
             }
         }
