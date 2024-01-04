@@ -31,8 +31,27 @@ suspend fun createUser(username: String, password: String): User {
     return createdUser
 }
 
-suspend fun getUserByToken(token: String): User? = query {
-    Token.find { TokensTable.raw eq token }.singleOrNull()?.user
+/**
+ * This will verify user's password by matching against stored password hash,
+ * so if user provided an invalid password this function will return null.
+ */
+suspend fun getUserByIdAndPassword(username: String, rawPassword: String): User? {
+    val (user, passHash) = query {
+        val user = User.find { UsersTable.name eq username }.singleOrNull()
+        val passHash = user?.password?.singleOrNull()?.hash
+
+        user to passHash
+    }
+
+    if (user == null || passHash == null) {
+        return null
+    }
+
+    if (bcryptMatch(rawPassword, passHash)) {
+        return user
+    }
+
+    return null
 }
 
 suspend fun getUserByName(username: String): User? = query {
@@ -43,6 +62,6 @@ suspend fun getUsersByUUIDs(uuids: List<UUID>, limit: Int = 500): List<User> = q
     User.find { UsersTable.id inList uuids }.limit(limit).toList()
 }
 
-suspend fun getUserByUUID(uuid: UUID): User = query {
-    User.find { UsersTable.id eq uuid }.single()
+suspend fun getUserByToken(token: String): User? = query {
+    Token.find { TokensTable.raw eq token }.singleOrNull()?.user
 }
