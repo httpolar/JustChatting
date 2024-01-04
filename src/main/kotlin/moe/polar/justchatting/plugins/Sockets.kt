@@ -16,7 +16,7 @@ import moe.polar.justchatting.entities.dao.Message
 import moe.polar.justchatting.entities.dao.User
 import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.query
-import moe.polar.justchatting.principals.UserUuidPrincipal
+import moe.polar.justchatting.principals.UserIdPrincipal
 
 
 val connections: MutableSet<WSConnection> = Collections.synchronizedSet(LinkedHashSet())
@@ -35,7 +35,7 @@ fun Application.configureSockets() {
             webSocket("/chat") {
                 val paramRoom = call.parameters["room"]?.toUInt() ?: 0u
 
-                val principal = call.principal<UserUuidPrincipal>()
+                val principal = call.principal<UserIdPrincipal>()
                     ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Unauthorized"))
 
                 val thisConnection = WSConnection(this, principal, paramRoom)

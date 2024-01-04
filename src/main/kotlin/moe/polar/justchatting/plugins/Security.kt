@@ -11,7 +11,7 @@ import moe.polar.justchatting.entities.dao.User
 import moe.polar.justchatting.entities.tables.TokensTable
 import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.query
-import moe.polar.justchatting.principals.UserUuidPrincipal
+import moe.polar.justchatting.principals.UserIdPrincipal
 import moe.polar.justchatting.services.bcryptMatch
 
 object AuthenticationType {
@@ -23,10 +23,10 @@ fun Application.configureSecurity() {
     authentication {
         bearer(AuthenticationType.BEARER) {
             authenticate { credentials ->
-                val user = query { Token.find { TokensTable.raw eq credentials.token }.firstOrNull()?.user }
+                val user = query { Token.find { TokensTable.raw eq credentials.token }.singleOrNull()?.user }
                     ?: return@authenticate null
 
-                UserUuidPrincipal(user.id.value)
+                UserIdPrincipal(user.id.value)
             }
         }
 
@@ -46,7 +46,7 @@ fun Application.configureSecurity() {
 
                 val isMatching = bcryptMatch(credentials.password, password.hash)
                 if (isMatching) {
-                    UserUuidPrincipal(user.id.value)
+                    UserIdPrincipal(user.id.value)
                 } else {
                     null
                 }

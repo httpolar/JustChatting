@@ -13,7 +13,7 @@ import moe.polar.justchatting.entities.dao.User
 import moe.polar.justchatting.entities.dao.toSerializable
 import moe.polar.justchatting.extensions.requirePrincipal
 import moe.polar.justchatting.plugins.AuthenticationType
-import moe.polar.justchatting.principals.UserUuidPrincipal
+import moe.polar.justchatting.principals.UserIdPrincipal
 import moe.polar.justchatting.routes.users.resource.UsersResource
 import moe.polar.justchatting.services.badRequest
 import moe.polar.justchatting.services.getUserByUUID
@@ -30,7 +30,7 @@ private data class ReadBody(
 fun Route.readUsersRoute() {
     authenticate(AuthenticationType.BEARER, strategy = AuthenticationStrategy.Required) {
         get<UsersResource> {
-            val principal = call.requirePrincipal<UserUuidPrincipal>()
+            val principal = call.requirePrincipal<UserIdPrincipal>()
             val body = call.receive<ReadBody>()
 
             if (body.ids.isEmpty() && !body.me) {
