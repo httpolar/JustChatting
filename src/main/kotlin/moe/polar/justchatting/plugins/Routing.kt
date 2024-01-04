@@ -12,8 +12,9 @@ import io.ktor.server.response.respondText
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import moe.polar.justchatting.errors.responses.StatusCodeError
-import moe.polar.justchatting.routes.installTokenRoutes
-import moe.polar.justchatting.routes.installUsersRoutes
+import moe.polar.justchatting.routes.configureMessagesRoutes
+import moe.polar.justchatting.routes.configureTokenRoutes
+import moe.polar.justchatting.routes.configureUsersRoutes
 
 fun Application.configureRouting() {
     install(AutoHeadResponse)
@@ -37,6 +38,7 @@ fun Application.configureRouting() {
         }
     }
 
-    installUsersRoutes()
-    installTokenRoutes()
+    configureUsersRoutes()
+    configureTokenRoutes()
+    configureMessagesRoutes()
 }
