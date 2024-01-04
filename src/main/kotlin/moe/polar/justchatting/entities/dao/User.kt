@@ -6,6 +6,7 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import moe.polar.justchatting.entities.tables.PasswordsTable
 import moe.polar.justchatting.entities.tables.UsersTable
+import moe.polar.justchatting.extensions.query
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -37,3 +38,7 @@ fun User.toSerializable() = UserSerializable(
     createdAt,
     seenAt
 )
+
+suspend fun UUID.toUser(): User = query {
+    User.find { UsersTable.id eq this@toUser }.single()
+}
