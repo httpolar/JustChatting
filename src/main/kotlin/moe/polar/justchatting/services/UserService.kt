@@ -6,7 +6,6 @@ import moe.polar.justchatting.entities.dao.User
 import moe.polar.justchatting.entities.tables.TokensTable
 import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.query
-import java.util.UUID
 
 /**
  * Creates a new user entry in a database
@@ -56,10 +55,6 @@ suspend fun getUserByIdAndPassword(username: String, rawPassword: String): User?
 
 suspend fun getUserByName(username: String): User? = query {
     User.find { UsersTable.name eq username }.singleOrNull()
-}
-
-suspend fun getUsersByUUIDs(uuids: List<UUID>, limit: Int = 500): List<User> = query {
-    User.find { UsersTable.id inList uuids }.limit(limit).toList()
 }
 
 suspend fun getUserByToken(token: String): User? = query {
