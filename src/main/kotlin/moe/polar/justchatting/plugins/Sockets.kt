@@ -1,22 +1,24 @@
 package moe.polar.justchatting.plugins
 
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.auth.AuthenticationStrategy
 import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.principal
-import io.ktor.server.routing.*
-import io.ktor.server.websocket.*
-import io.ktor.websocket.*
+import io.ktor.server.routing.routing
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
 import java.time.Duration
 import java.util.Collections
 import moe.polar.justchatting.chat.WSConnection
 import moe.polar.justchatting.chat.WSOutgoingMessage
 import moe.polar.justchatting.chat.toFrame
 import moe.polar.justchatting.entities.dao.Message
-import moe.polar.justchatting.entities.dao.User
-import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.query
-import moe.polar.justchatting.principals.UserIdPrincipal
+import moe.polar.justchatting.extensions.requireUser
 
 
 val connections: MutableSet<WSConnection> = Collections.synchronizedSet(LinkedHashSet())
@@ -29,16 +31,13 @@ fun Application.configureSockets() {
         masking = false
     }
 
-
     routing {
         authenticate(AuthenticationType.BEARER, strategy = AuthenticationStrategy.Required) {
             webSocket("/chat") {
                 val paramRoom = call.parameters["room"]?.toUInt() ?: 0u
+                val user = call.requireUser()
 
-                val principal = call.principal<UserIdPrincipal>()
-                    ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Unauthorized"))
-
-                val thisConnection = WSConnection(this, principal, paramRoom)
+                val thisConnection = WSConnection(this, user, paramRoom)
                 connections += thisConnection
 
                 try {
@@ -56,10 +55,8 @@ fun Application.configureSockets() {
                         }
 
                         val message = query {
-                            val user = User.find { UsersTable.id eq thisConnection.principal.uuid }.limit(1).first()
-
                             val message = Message.new {
-                                sender = user
+                                sender = thisConnection.user
                                 room = thisConnection.room
                                 content = receivedText
                             }
