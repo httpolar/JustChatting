@@ -6,7 +6,7 @@ import io.ktor.server.auth.authentication
 import io.ktor.server.auth.bearer
 import io.ktor.server.auth.form
 import io.ktor.server.response.respondText
-import moe.polar.justchatting.principals.UserPrincipal
+import moe.polar.justchatting.principals.UserIdPrincipal
 import moe.polar.justchatting.services.getUserByIdAndPassword
 import moe.polar.justchatting.services.getUserByToken
 
@@ -24,7 +24,7 @@ fun Application.configureSecurity() {
                 if (user == null) {
                     null
                 } else {
-                    UserPrincipal(user)
+                    UserIdPrincipal(user.id.value)
                 }
             }
         }
@@ -39,7 +39,7 @@ fun Application.configureSecurity() {
                 if (user == null) {
                     null
                 } else {
-                    UserPrincipal(user)
+                    UserIdPrincipal(user.id.value)
                 }
             }
 

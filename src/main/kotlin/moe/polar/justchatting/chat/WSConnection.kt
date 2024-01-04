@@ -1,10 +1,10 @@
 package moe.polar.justchatting.chat
 
 import io.ktor.websocket.DefaultWebSocketSession
-import moe.polar.justchatting.entities.dao.User
+import moe.polar.justchatting.principals.UserIdPrincipal
 
 class WSConnection(
     val session: DefaultWebSocketSession,
-    val user: User,
+    val principal: UserIdPrincipal,
     val room: UInt = 0u
 )

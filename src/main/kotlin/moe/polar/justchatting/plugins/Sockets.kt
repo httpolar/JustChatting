@@ -17,11 +17,13 @@ import moe.polar.justchatting.chat.WSConnection
 import moe.polar.justchatting.chat.WSOutgoingMessage
 import moe.polar.justchatting.chat.toFrame
 import moe.polar.justchatting.entities.dao.Message
+import moe.polar.justchatting.entities.dao.getUser
 import moe.polar.justchatting.extensions.query
-import moe.polar.justchatting.extensions.requireUser
+import moe.polar.justchatting.extensions.requirePrincipal
+import moe.polar.justchatting.principals.UserIdPrincipal
 
 
-val connections: MutableSet<WSConnection> = Collections.synchronizedSet(LinkedHashSet())
+private val connections: MutableSet<WSConnection> = Collections.synchronizedSet(LinkedHashSet())
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -35,9 +37,9 @@ fun Application.configureSockets() {
         authenticate(AuthenticationType.BEARER, strategy = AuthenticationStrategy.Required) {
             webSocket("/chat") {
                 val paramRoom = call.parameters["room"]?.toUInt() ?: 0u
-                val user = call.requireUser()
+                val principal = call.requirePrincipal<UserIdPrincipal>()
 
-                val thisConnection = WSConnection(this, user, paramRoom)
+                val thisConnection = WSConnection(this, principal, paramRoom)
                 connections += thisConnection
 
                 try {
@@ -55,8 +57,10 @@ fun Application.configureSockets() {
                         }
 
                         val message = query {
+                            val user = thisConnection.principal.id.getUser()
+
                             val message = Message.new {
-                                sender = thisConnection.user
+                                sender = user
                                 room = thisConnection.room
                                 content = receivedText
                             }
