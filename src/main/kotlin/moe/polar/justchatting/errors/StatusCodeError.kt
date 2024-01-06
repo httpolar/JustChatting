@@ -1,4 +1,4 @@
-package moe.polar.justchatting.errors.responses
+package moe.polar.justchatting.errors
 
 import io.ktor.http.HttpStatusCode
 

@@ -11,7 +11,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import moe.polar.justchatting.errors.responses.StatusCodeError
+import moe.polar.justchatting.errors.StatusCodeError
 import moe.polar.justchatting.routes.configureMessagesRoutes
 import moe.polar.justchatting.routes.configureTokenRoutes
 import moe.polar.justchatting.routes.configureUsersRoutes

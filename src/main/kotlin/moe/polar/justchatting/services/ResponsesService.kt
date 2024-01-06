@@ -1,7 +1,7 @@
 package moe.polar.justchatting.services
 
 import io.ktor.http.HttpStatusCode
-import moe.polar.justchatting.errors.responses.StatusCodeError
+import moe.polar.justchatting.errors.StatusCodeError
 
 fun unauthorized(message: String = "Unauthorized"): Nothing {
     throw StatusCodeError(HttpStatusCode.Unauthorized, message)
