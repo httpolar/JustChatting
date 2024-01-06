@@ -8,7 +8,8 @@ import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.generateDataSource
 import moe.polar.justchatting.extensions.hikariProperties
 import moe.polar.justchatting.extensions.query
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 
 suspend fun setupDatabase(ds: HikariDataSource = generateDataSource(hikariProperties())) {
     Database.connect(ds)
@@ -18,7 +19,7 @@ suspend fun setupDatabase(ds: HikariDataSource = generateDataSource(hikariProper
             UsersTable,
             PasswordsTable,
             TokensTable,
-            MessagesTable,
+            MessagesTable
         )
     }
 }
