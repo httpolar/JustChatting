@@ -20,7 +20,7 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
     var createdAt by UsersTable.createdAt
     var power by UsersTable.power
 
-    val password by Password referencedOn PasswordsTable.userId
+    val password by Password referrersOn PasswordsTable.userId
     val tokens by Token referrersOn TokensTable.user
 }
 
