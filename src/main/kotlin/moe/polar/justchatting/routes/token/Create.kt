@@ -5,17 +5,22 @@ import io.ktor.server.auth.AuthenticationStrategy
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.resources.post
-import io.ktor.server.response.respondText
+import io.ktor.server.response.respond
+import kotlinx.serialization.Serializable
 import moe.polar.justchatting.entities.dao.Token
-import moe.polar.justchatting.entities.tables.TokensTable
+import moe.polar.justchatting.entities.dao.UserSerializable
+import moe.polar.justchatting.entities.dao.toSerializable
 import moe.polar.justchatting.extensions.query
 import moe.polar.justchatting.extensions.requireUser
 import moe.polar.justchatting.plugins.AuthenticationType
 import moe.polar.justchatting.routes.token.resource.TokenResource
 import moe.polar.justchatting.services.generateToken
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
 
+@Serializable
+private data class NewTokenBody(
+    val user: UserSerializable,
+    val token: String,
+)
 
 fun Route.createTokenRoute() {
     authenticate(AuthenticationType.FORM, strategy = AuthenticationStrategy.Required) {
@@ -24,16 +29,15 @@ fun Route.createTokenRoute() {
             val rawToken = generateToken()
 
             val token = query {
-                // we should delete all existing tokens whenever user requests new token
-                TokensTable.deleteWhere { user eq tokenHolder.id }
-
                 Token.new {
                     raw = rawToken
                     user = tokenHolder
                 }
             }
 
-            call.respondText(token.raw)
+            val body = NewTokenBody(tokenHolder.toSerializable(), token.raw)
+
+            call.respond(body)
         }
     }
 }
