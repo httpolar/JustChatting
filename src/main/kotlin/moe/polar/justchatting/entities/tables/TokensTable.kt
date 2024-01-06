@@ -11,7 +11,7 @@ object TokensTable : UUIDTable() {
         UsersTable,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.CASCADE
-    ).uniqueIndex()
+    )
 
     val raw = text("raw")
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
