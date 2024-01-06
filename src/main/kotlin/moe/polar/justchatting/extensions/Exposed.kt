@@ -27,7 +27,7 @@ fun hikariProperties(filename: String = "hikari.properties"): Properties {
         props.load(file.reader())
     } else {
         props.apply {
-            setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource")
+            setProperty("dataSourceClassName", org.postgresql.ds.PGSimpleDataSource::class.java.canonicalName)
             setProperty("dataSource.user", "username")
             setProperty("dataSource.password", "password")
             setProperty("dataSource.databaseName", "justchatting")
