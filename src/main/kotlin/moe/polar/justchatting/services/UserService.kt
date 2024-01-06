@@ -37,7 +37,7 @@ suspend fun createUser(username: String, password: String): User {
 suspend fun getUserByIdAndPassword(username: String, rawPassword: String): User? {
     val (user, passHash) = query {
         val user = User.find { UsersTable.name eq username }.singleOrNull()
-        val passHash = user?.password?.singleOrNull()?.hash
+        val passHash = user?.password?.hash
 
         user to passHash
     }

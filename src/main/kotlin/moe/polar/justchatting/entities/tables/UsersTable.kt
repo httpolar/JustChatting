@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object UsersTable : UUIDTable() {
     val name = text("username").uniqueIndex()
-    val powerLevel = integer("power_level").default(0)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp())
-    val seenAt = timestamp("seen_at").nullable()
+    val power = integer("power").default(0)
 }

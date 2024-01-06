@@ -5,38 +5,38 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import moe.polar.justchatting.entities.tables.PasswordsTable
+import moe.polar.justchatting.entities.tables.TokensTable
 import moe.polar.justchatting.entities.tables.UsersTable
 import moe.polar.justchatting.extensions.query
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
+
 class User(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<User>(UsersTable)
 
     var username by UsersTable.name
-    var powerLevel by UsersTable.powerLevel
     var createdAt by UsersTable.createdAt
-    var seenAt by UsersTable.seenAt
+    var power by UsersTable.power
 
-    val password by Password optionalReferrersOn PasswordsTable.user
+    val password by Password referencedOn PasswordsTable.userId
+    val tokens by Token referrersOn TokensTable.user
 }
 
 @Serializable
 data class UserSerializable(
     val id: @Contextual UUID,
     val username: String,
-    val powerLevel: Int,
     val createdAt: Instant,
-    val seenAt: Instant?
+    val power: Int
 )
 
 fun User.toSerializable() = UserSerializable(
     id.value,
     username,
-    powerLevel,
     createdAt,
-    seenAt
+    power
 )
 
 suspend fun UUID.getUser(): User = query {
