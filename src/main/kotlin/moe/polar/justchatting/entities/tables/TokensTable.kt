@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object TokensTable : UUIDTable() {
-    val user = reference(
+    val userId = reference(
         "user_id",
         UsersTable,
         onDelete = ReferenceOption.CASCADE,

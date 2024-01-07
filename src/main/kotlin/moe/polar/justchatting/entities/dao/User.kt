@@ -21,7 +21,7 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
     var power by UsersTable.power
 
     val password by Password optionalBackReferencedOn PasswordsTable.userId
-    val tokens by Token referrersOn TokensTable.user
+    val tokens by Token referrersOn TokensTable.userId
 }
 
 @Serializable

@@ -9,7 +9,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 class Token(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<Token>(TokensTable)
 
-    var user by User referencedOn TokensTable.user
+    var user by User referencedOn TokensTable.userId
     var raw by TokensTable.raw
     val createdAt by TokensTable.createdAt
     var expiresArray by TokensTable.expiresAt
