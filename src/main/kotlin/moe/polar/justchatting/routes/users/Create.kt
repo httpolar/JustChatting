@@ -23,6 +23,10 @@ fun Route.createUsersRoute() {
     post<UsersResource> {
         val body = call.receive<CreateBody>()
 
+        if (!body.username.matches("""^[a-zA-Z_\d]{3,16}$""".toRegex())) {
+            badRequest("Usernames must be 3-16 latin characters, numbers and _ are allowed!")
+        }
+
         val existingUser = getUserByName(body.username)
         if (existingUser != null) {
             badRequest("This username is already taken!")
