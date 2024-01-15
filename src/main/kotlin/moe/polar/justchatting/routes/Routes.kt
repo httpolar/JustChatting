@@ -6,12 +6,14 @@ import moe.polar.justchatting.routes.messages.readMessagesRoute
 import moe.polar.justchatting.routes.token.createTokenRoute
 import moe.polar.justchatting.routes.token.deleteTokenRoute
 import moe.polar.justchatting.routes.users.createUsersRoute
-import moe.polar.justchatting.routes.users.readUsersRoute
+import moe.polar.justchatting.routes.users.id.readUserById
+import moe.polar.justchatting.routes.users.me.readUserMe
 
 fun Application.configureUsersRoutes() {
     routing {
         createUsersRoute()
-        readUsersRoute()
+        readUserMe()
+        readUserById()
     }
 }
 
