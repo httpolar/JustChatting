@@ -24,7 +24,7 @@ fun Application.configureSecurity() {
                 if (user == null) {
                     null
                 } else {
-                    UserIdPrincipal(user.id.value)
+                    UserIdPrincipal(user.id.value, credentials.token)
                 }
             }
         }
