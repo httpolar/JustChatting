@@ -18,6 +18,7 @@ import moe.polar.justchatting.chat.WSOutgoingMessage
 import moe.polar.justchatting.chat.toFrame
 import moe.polar.justchatting.entities.dao.Message
 import moe.polar.justchatting.entities.dao.getUser
+import moe.polar.justchatting.entities.dao.toSerializable
 import moe.polar.justchatting.extensions.query
 import moe.polar.justchatting.extensions.requirePrincipal
 import moe.polar.justchatting.principals.UserIdPrincipal
@@ -65,7 +66,7 @@ fun Application.configureSockets() {
                                 content = receivedText
                             }
 
-                            WSOutgoingMessage(message.sender?.id?.value, message.room, message.content)
+                            WSOutgoingMessage(message.sender?.toSerializable(), message.room, message.content)
                         }
 
                         for (connection in connections) {
